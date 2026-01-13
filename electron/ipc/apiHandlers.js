@@ -1,5 +1,6 @@
 const { ipcMain } = require('electron');
-const Store = require('electron-store');
+const StoreModule = require('electron-store');
+const Store = StoreModule.default || StoreModule;
 const axios = require('axios');
 
 const store = new Store();

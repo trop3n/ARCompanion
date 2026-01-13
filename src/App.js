@@ -21,7 +21,7 @@ function App() {
               <main className="main-content">
                 <Routes>
                   <Route path="/" element={<EventTimerList />} />
-                  <Route path="/items" element={<ItemDatabase />} />
+                  <Route path="/database" element={<ItemDatabase />} />
                   <Route path="/needed-items" element={<NeededItems />} />
                 </Routes>
               </main>

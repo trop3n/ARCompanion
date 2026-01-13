@@ -1,0 +1,80 @@
+.event-card {
+  background-color: #1a1f3a;
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 4px solid #3b82f6;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.event-card.active {
+  background-color: #1f2642;
+  border-left-width: 6px;
+  box-shadow: 0 4px 16px rgba(67, 102, 255, 0.3);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.event-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a9eff;
+}
+
+.active-badge {
+  background-color: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.event-map {
+  font-size: 14px;
+  color: #a0a8b8;
+  margin-bottom: 12px;
+}
+
+.event-time {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.time-range {
+  font-size: 13px;
+  color: #7a8292;
+}
+
+.time-remaining {
+  font-size: 14px;
+  color: #e0e0e0;
+}
+
+.countdown {
+  font-weight: 600;
+  color: #4a9eff;
+  font-family: 'Courier New', monospace;
+}

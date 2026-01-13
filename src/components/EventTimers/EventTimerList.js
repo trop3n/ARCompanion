@@ -5,8 +5,8 @@ import EventTimerCard from './EventTimerCard';
 import './EventTimerList.css';
 
 function EventTimerList() {
-  const { events: eventScheduleData, loading, error } = useData();
-  const { activeEvent, upcomingEvents, currentTime } = useEventTimers(eventScheduleData);
+  const { events: apiEvents, loading, error } = useData();
+  const { activeEvents, upcomingEvents, currentTime } = useEventTimers(apiEvents);
 
   if (loading) {
     return (
@@ -19,64 +19,64 @@ function EventTimerList() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="event-timers-container">
-        <div className="error-state">
-          <h2>Unable to load event data</h2>
-          <p>{error}</p>
-          <p className="note">Showing default event schedule</p>
-        </div>
-        <div className="events-section">
-          <EventsDisplay activeEvent={activeEvent} upcomingEvents={upcomingEvents} currentTime={currentTime} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="event-timers-container">
       <div className="page-header">
         <h1>Event Timers</h1>
         <div className="current-time">
-          Current UTC: {currentTime.toUTCString()}
+          {currentTime.toLocaleString()} (Local Time)
         </div>
       </div>
 
-      <EventsDisplay activeEvent={activeEvent} upcomingEvents={upcomingEvents} currentTime={currentTime} />
-    </div>
-  );
-}
+      {error && (
+        <div className="error-banner">
+          <span>⚠️ {error}</span>
+        </div>
+      )}
 
-function EventsDisplay({ activeEvent, upcomingEvents, currentTime }) {
-  return (
-    <>
-      {activeEvent && (
+      {activeEvents.length > 0 && (
         <div className="events-section">
-          <h2 className="section-title">Active Event</h2>
-          <div className="active-event">
-            <EventTimerCard event={activeEvent} />
+          <h2 className="section-title">
+            Active Events <span className="count">({activeEvents.length})</span>
+          </h2>
+          <div className="active-events-grid">
+            {activeEvents.map((event, index) => (
+              <EventTimerCard
+                key={`active-${event.name}-${event.map}-${index}`}
+                event={event}
+              />
+            ))}
           </div>
         </div>
       )}
 
       {upcomingEvents.length > 0 && (
         <div className="events-section">
-          <h2 className="section-title">Upcoming Events</h2>
-          <div className="upcoming-events">
+          <h2 className="section-title">
+            Upcoming Events <span className="count">({upcomingEvents.length})</span>
+          </h2>
+          <div className="upcoming-events-grid">
             {upcomingEvents.map((event, index) => (
-              <EventTimerCard key={`${event.name}-${event.startTime}-${index}`} event={event} />
+              <EventTimerCard
+                key={`upcoming-${event.name}-${event.map}-${index}`}
+                event={event}
+              />
             ))}
           </div>
         </div>
       )}
 
-      {!activeEvent && upcomingEvents.length === 0 && (
+      {activeEvents.length === 0 && upcomingEvents.length === 0 && !loading && (
         <div className="empty-state">
-          <p>No events scheduled</p>
+          <p>No events available</p>
+          {!apiEvents || apiEvents.length === 0 ? (
+            <p className="note">Unable to load event data from the API</p>
+          ) : (
+            <p className="note">All scheduled events have passed</p>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 

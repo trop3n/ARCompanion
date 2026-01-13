@@ -31,14 +31,32 @@
   margin-bottom: 32px;
 }
 
-.active-event {
-  max-width: 600px;
+.active-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
-.upcoming-events {
+.upcoming-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+}
+
+.error-banner {
+  background-color: #7f1d1d;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  color: #fca5a5;
+  font-size: 14px;
+}
+
+.count {
+  font-weight: 400;
+  color: #7a8292;
+  font-size: 16px;
 }
 
 .loading-state,

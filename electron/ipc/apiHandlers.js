@@ -15,27 +15,47 @@ function isFresh(timestamp, hours = 12) {
   return age < (hours * 60 * 60 * 1000);
 }
 
+function extractData(responseData) {
+  // MetaForge API returns { data: [...], cachedAt: ... }
+  // Extract the actual data array if it exists
+  if (responseData && responseData.data && Array.isArray(responseData.data)) {
+    return responseData.data;
+  }
+  // If response is already an array, return as-is
+  if (Array.isArray(responseData)) {
+    return responseData;
+  }
+  // Otherwise return the raw response
+  return responseData;
+}
+
 async function fetchWithFallback(primaryUrl, fallbackUrl, cacheKey) {
   try {
+    console.log(`Fetching from: ${primaryUrl}`);
     const response = await axios.get(primaryUrl, { timeout: 10000 });
+    const extractedData = extractData(response.data);
+
     store.set(cacheKey, {
-      data: response.data,
+      data: extractedData,
       lastUpdated: Date.now(),
       source: 'primary'
     });
-    return response.data;
+    console.log(`Successfully fetched ${cacheKey}: ${Array.isArray(extractedData) ? extractedData.length + ' items' : 'data received'}`);
+    return extractedData;
   } catch (primaryError) {
     console.warn(`Primary API failed for ${cacheKey}, trying fallback...`, primaryError.message);
 
     if (fallbackUrl) {
       try {
         const response = await axios.get(fallbackUrl, { timeout: 10000 });
+        const extractedData = extractData(response.data);
+
         store.set(cacheKey, {
-          data: response.data,
+          data: extractedData,
           lastUpdated: Date.now(),
           source: 'fallback'
         });
-        return response.data;
+        return extractedData;
       } catch (fallbackError) {
         console.error(`Fallback API also failed for ${cacheKey}`, fallbackError.message);
       }

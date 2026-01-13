@@ -1,46 +1,49 @@
 import { useState, useEffect } from 'react';
 import {
-  calculateEventTimes,
-  getCurrentActiveEvent,
-  getUpcomingEvents,
-  parseApiEventSchedule
+  processApiEvents,
+  getActiveEvents,
+  getUpcomingEvents
 } from '../services/eventTimer';
 
-export function useEventTimers(eventScheduleData = null) {
+export function useEventTimers(apiEvents = []) {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [events, setEvents] = useState([]);
-  const [activeEvent, setActiveEvent] = useState(null);
+  const [processedEvents, setProcessedEvents] = useState([]);
+  const [activeEvents, setActiveEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-
-  const eventSchedule = eventScheduleData
-    ? parseApiEventSchedule(eventScheduleData)
-    : undefined;
 
   useEffect(() => {
     const updateTimers = () => {
       const now = new Date();
       setCurrentTime(now);
 
-      const allEvents = calculateEventTimes(now, eventSchedule);
-      const current = getCurrentActiveEvent(now, eventSchedule);
-      const upcoming = getUpcomingEvents(now, 6, eventSchedule);
+      if (apiEvents && apiEvents.length > 0) {
+        const processed = processApiEvents(apiEvents, now);
+        const active = getActiveEvents(processed);
+        const upcoming = getUpcomingEvents(processed, 12);
 
-      setEvents(allEvents);
-      setActiveEvent(current);
-      setUpcomingEvents(upcoming);
+        setProcessedEvents(processed);
+        setActiveEvents(active);
+        setUpcomingEvents(upcoming);
+      } else {
+        setProcessedEvents([]);
+        setActiveEvents([]);
+        setUpcomingEvents([]);
+      }
     };
 
+    // Initial update
     updateTimers();
 
+    // Update every second for live countdowns
     const interval = setInterval(updateTimers, 1000);
 
     return () => clearInterval(interval);
-  }, [eventScheduleData]);
+  }, [apiEvents]);
 
   return {
     currentTime,
-    events,
-    activeEvent,
+    events: processedEvents,
+    activeEvents,
     upcomingEvents
   };
 }

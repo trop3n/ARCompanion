@@ -6,8 +6,7 @@ import Sidebar from './components/Navigation/Sidebar';
 import TopBar from './components/Navigation/TopBar';
 import EventTimerList from './components/EventTimers/EventTimerList';
 import ItemDatabase from './components/Items/ItemDatabase';
-import ExpeditionProject from './components/Expedition/ExpeditionProject';
-import WorkbenchUpgrades from './components/Workbench/WorkbenchUpgrades';
+import NeededItems from './components/NeededItems/NeededItems';
 import './App.css';
 
 function App() {
@@ -23,8 +22,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<EventTimerList />} />
                   <Route path="/items" element={<ItemDatabase />} />
-                  <Route path="/expedition" element={<ExpeditionProject />} />
-                  <Route path="/workbench" element={<WorkbenchUpgrades />} />
+                  <Route path="/needed-items" element={<NeededItems />} />
                 </Routes>
               </main>
             </div>

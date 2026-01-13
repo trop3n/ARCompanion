@@ -6,7 +6,8 @@ export const DataProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [events, setEvents] = useState([]);
   const [quests, setQuests] = useState([]);
-  const [workbench, setWorkbench] = useState([]);
+  const [hideout, setHideout] = useState([]);
+  const [expedition, setExpedition] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,11 +24,12 @@ export const DataProvider = ({ children }) => {
         throw new Error('Electron API not available. Running outside Electron?');
       }
 
-      const [itemsData, eventsData, questsData, workbenchData] = await Promise.allSettled([
+      const [itemsData, eventsData, questsData, hideoutData, expeditionData] = await Promise.allSettled([
         window.electronAPI.fetchItems(),
         window.electronAPI.fetchEvents(),
         window.electronAPI.fetchQuests(),
-        window.electronAPI.fetchWorkbench()
+        window.electronAPI.fetchHideout(),
+        window.electronAPI.fetchExpedition()
       ]);
 
       if (itemsData.status === 'fulfilled') {
@@ -42,11 +44,15 @@ export const DataProvider = ({ children }) => {
         setQuests(Array.isArray(questsData.value) ? questsData.value : []);
       }
 
-      if (workbenchData.status === 'fulfilled') {
-        setWorkbench(Array.isArray(workbenchData.value) ? workbenchData.value : []);
+      if (hideoutData.status === 'fulfilled') {
+        setHideout(Array.isArray(hideoutData.value) ? hideoutData.value : []);
       }
 
-      const allFailed = [itemsData, eventsData, questsData, workbenchData].every(
+      if (expeditionData.status === 'fulfilled') {
+        setExpedition(Array.isArray(expeditionData.value) ? expeditionData.value : []);
+      }
+
+      const allFailed = [itemsData, eventsData, questsData, hideoutData, expeditionData].every(
         result => result.status === 'rejected'
       );
 
@@ -72,7 +78,8 @@ export const DataProvider = ({ children }) => {
         items,
         events,
         quests,
-        workbench,
+        hideout,
+        expedition,
         loading,
         error,
         refreshData

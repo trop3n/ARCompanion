@@ -103,6 +103,31 @@ ipcMain.handle('api:fetchEvents', async () => {
   );
 });
 
+// Fetch all pages of quests (API is paginated)
+async function fetchAllQuests() {
+  const allQuests = [];
+  let page = 1;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    console.log(`Fetching quests page ${page}...`);
+    const response = await axios.get(`${API_BASE_URL}/quests?page=${page}`, { timeout: 10000 });
+    const data = response.data;
+
+    if (data && data.data && Array.isArray(data.data)) {
+      allQuests.push(...data.data);
+    }
+
+    hasNextPage = data?.pagination?.hasNextPage || false;
+    page++;
+
+    // Safety limit
+    if (page > 10) break;
+  }
+
+  return allQuests;
+}
+
 ipcMain.handle('api:fetchQuests', async () => {
   const cached = store.get('quests');
 
@@ -111,27 +136,55 @@ ipcMain.handle('api:fetchQuests', async () => {
     return cached.data;
   }
 
-  console.log('Fetching fresh quests data...');
-  return await fetchWithFallback(
-    `${API_BASE_URL}/quests`,
-    `${FALLBACK_API_URL}/quests`,
-    'quests'
-  );
+  console.log('Fetching fresh quests data (all pages)...');
+  try {
+    const allQuests = await fetchAllQuests();
+    store.set('quests', {
+      data: allQuests,
+      lastUpdated: Date.now(),
+      source: 'primary'
+    });
+    console.log(`Successfully fetched ${allQuests.length} quests`);
+    return allQuests;
+  } catch (error) {
+    console.error('Failed to fetch quests:', error.message);
+    const cached = store.get('quests');
+    if (cached && cached.data) {
+      return cached.data;
+    }
+    throw error;
+  }
 });
 
-ipcMain.handle('api:fetchWorkbench', async () => {
-  const cached = store.get('workbench');
+ipcMain.handle('api:fetchHideout', async () => {
+  const cached = store.get('hideout');
 
   if (cached && isFresh(cached.lastUpdated, 12)) {
-    console.log('Returning cached workbench data');
+    console.log('Returning cached hideout data');
     return cached.data;
   }
 
-  console.log('Fetching fresh workbench data...');
+  console.log('Fetching fresh hideout/workshop data...');
   return await fetchWithFallback(
-    `${API_BASE_URL}/workbench`,
+    `${API_BASE_URL}/hideout`,
     null,
-    'workbench'
+    'hideout'
+  );
+});
+
+ipcMain.handle('api:fetchExpedition', async () => {
+  const cached = store.get('expedition');
+
+  if (cached && isFresh(cached.lastUpdated, 12)) {
+    console.log('Returning cached expedition data');
+    return cached.data;
+  }
+
+  console.log('Fetching fresh expedition data...');
+  return await fetchWithFallback(
+    `${API_BASE_URL}/expedition`,
+    null,
+    'expedition'
   );
 });
 

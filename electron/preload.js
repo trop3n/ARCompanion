@@ -4,7 +4,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   fetchItems: () => ipcRenderer.invoke('api:fetchItems'),
   fetchEvents: () => ipcRenderer.invoke('api:fetchEvents'),
   fetchQuests: () => ipcRenderer.invoke('api:fetchQuests'),
-  fetchWorkbench: () => ipcRenderer.invoke('api:fetchWorkbench'),
+  fetchHideout: () => ipcRenderer.invoke('api:fetchHideout'),
+  fetchExpedition: () => ipcRenderer.invoke('api:fetchExpedition'),
 
   getSettings: () => ipcRenderer.invoke('storage:getSettings'),
   setSettings: (settings) => ipcRenderer.invoke('storage:setSettings', settings),

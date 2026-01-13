@@ -8,8 +8,7 @@ function Sidebar() {
   const navItems = [
     { path: '/', label: 'Event Timers', icon: '⏱️' },
     { path: '/items', label: 'Items', icon: '📦' },
-    { path: '/expedition', label: 'Expedition', icon: '🗺️' },
-    { path: '/workbench', label: 'Workbench', icon: '🔧' }
+    { path: '/needed-items', label: 'Needed Items', icon: '📋' }
   ];
 
   return (
